@@ -50,9 +50,7 @@ public class BookService
     {
         return await _context.Book
             .Include(b => b.Author)
-            .Include(b => b.Title)
             .Include(b => b.Categories)
-            .Include(b => b.Price)
             .ToListAsync();
     }
     
@@ -60,9 +58,7 @@ public class BookService
     {
         return await _context.Book
             .Include(b => b.Author)
-            .Include(b => b.Title)
             .Include(b => b.Categories)
-            .Include(b => b.Price)
             .FirstOrDefaultAsync(b => b.Id == id);
     }
 
@@ -76,7 +72,6 @@ public class BookService
         }
 
         existingBook.Title = updatedBook.Title;
-        existingBook.Description = updatedBook.Description;
         existingBook.Price = updatedBook.Price;
 
         await _context.SaveChangesAsync();
@@ -97,6 +92,8 @@ public class BookService
 
         return true;
     }
+
+    
     
 
 }
