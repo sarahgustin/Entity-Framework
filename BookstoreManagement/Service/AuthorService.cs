@@ -26,23 +26,21 @@ public class AuthorService
         }
 
         //cek email udah ada belum
-        var existingAuthor = await _context.Authors.FirstOrDefaultAsync(e => e.Email == author.Email);
+        var existingAuthor = await _context.Author.FirstOrDefaultAsync(e => e.Email == author.Email);
 
         if (existingAuthor != null)
         {
             throw new InvalidOperationException($"Author with email {author.Email} already exists");
         }
-
-        _context.Authors.Add(author);
+        _context.Author.Add(author);
         await _context.SaveChangesAsync();
         return author;
-    
-    }
+    } 
 
     //get all author
     public async Task<List<Author>> GetAllAuthorAsync()
     {
-        return await _context.Authors
+        return await _context.Author
             .Include(a => a.Books)
             .OrderBy(a => a.Name)
             .ToListAsync();
@@ -51,7 +49,7 @@ public class AuthorService
     //get author by id
     public async Task<Author?> GetAuthorByIdAsync (int id)
     {
-        return await _context.Authors
+        return await _context.Author
             .Include(a => a.Books)
             .FirstOrDefaultAsync(a => a.Id == id);
     }
@@ -59,7 +57,7 @@ public class AuthorService
     //get author by most books count
     public async Task<Author?> GetAuthorWithMostBookAsync()
     {
-        return await _context.Authors
+        return await _context.Author
             .Include(a => a.Books)
             .OrderByDescending(a => a.Books.Count)
             .FirstOrDefaultAsync();
@@ -69,15 +67,12 @@ public class AuthorService
     //tambah phone number sama alamat 
     public async Task<Author?> UpdateAuthorProfileAsync(int id, Author updatedAuthor)
     {
-        var existingAuthor = await _context.Authors.FindAsync(id);
+        var existingAuthor = await _context.Author.FindAsync(id);
 
         if (existingAuthor == null)
         {
             return null;
         }
-
-        existingAuthor.Name = updatedAuthor.Name;
-        existingAuthor.Email = updatedAuthor.Email;
         existingAuthor.PhoneNumber = updatedAuthor.PhoneNumber;
         existingAuthor.Address = updatedAuthor.Address;
         
@@ -89,7 +84,7 @@ public class AuthorService
     //delete author by id
     public async Task<bool> DeleteAuthorAsync (int id)
     {
-        var author = await _context.Authors
+        var author = await _context.Author
             .Include(a => a.Books)
             .FirstOrDefaultAsync(a => a.Id == id);
 
@@ -105,7 +100,7 @@ public class AuthorService
             throw new InvalidOperationException ($"Gagal mengahapus author :  {author.Name}! Author ini masih memiliki buku yang terdaftar");
         }
 
-        _context.Authors.Remove(author);
+        _context.Author.Remove(author);
         await _context.SaveChangesAsync();
 
         return true;

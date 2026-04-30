@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BookstoreManagement.Models;
 
-public class Category
+public class Category 
 {
     public int Id {get; set;}
 

@@ -5,7 +5,7 @@ namespace BookstoreManagement.Models;
 
 public class Author
 {
-    public int Id {get; set;}
+    public int Id {get; set;} 
 
     [Required]
     [MaxLength(200)]

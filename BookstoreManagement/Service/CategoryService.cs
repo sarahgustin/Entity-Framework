@@ -12,7 +12,7 @@ public class CategoriService
     public CategoriService(BookstoreDbContext context)
     {
         _context = context;
-    }
+    } 
 
     //create category
     // get semua category sama semua bukunya
@@ -22,7 +22,7 @@ public class CategoriService
 
     public async Task<Category> CreateCategoryAsync( Category category)
     {
-        var existingCategory = await _context.Categories
+        var existingCategory = await _context.Category
             .FirstOrDefaultAsync(c => c.Name == category.Name);
 
         if (existingCategory != null)
@@ -30,14 +30,14 @@ public class CategoriService
             throw new InvalidOperationException ($"Kategori {category.Name} sudah terdaftar");
         }
 
-        _context.Categories.Add(category);
+        _context.Category.Add(category);
         await _context.SaveChangesAsync();
         return category;
     }
 
     public async Task<List<Category>> GetaAllCategoriesWithBooksAsync()
     {
-        return await _context.Categories
+        return await _context.Category
             .Include(c => c.Books)
             .OrderBy(c => c.Name)
             .ToListAsync();
@@ -45,14 +45,14 @@ public class CategoriService
 
     public async Task<Category?> GetCategoryByIdAsync(int id)
     {
-        return await _context.Categories
+        return await _context.Category
             .Include(c => c.Books)
             .FirstOrDefaultAsync(c => c.Id == id);
     }
 
     public async Task<Category?> UpdateCategoryNameAsync(int id, Category updatedCategory)
     {
-        var existingCategory = await _context.Categories.FindAsync(id);
+        var existingCategory = await _context.Category.FindAsync(id);
 
         if(existingCategory == null)
         {
@@ -66,7 +66,7 @@ public class CategoriService
 
     public async Task<bool> DeleteCategoryAsync(int id)
     {
-        var category = await _context.Categories
+        var category = await _context.Category
             .Include(c => c.Books)
             .FirstOrDefaultAsync(c => c.Id == id);
 
@@ -80,7 +80,7 @@ public class CategoriService
             throw new InvalidOperationException ($"Tidak dapat menghapus kategori {category.Name}! Masih memiliki buku terdaftar");
         }
 
-        _context.Categories.Remove(category);
+        _context.Category.Remove(category);
         await _context.SaveChangesAsync();
 
         return true;

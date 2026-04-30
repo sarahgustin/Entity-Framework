@@ -5,60 +5,55 @@ namespace BookstoreManagement.Data;
 
 public class BookstoreDbContext : DbContext
 {
-    public DbSet<Book> Books {get; set;}
-    public DbSet<Author> Authors {get; set;}
-    public DbSet<Category> Categories {get; set;}
+    public DbSet<Book> Book {get; set;}
+    public DbSet<Author> Author {get; set;}
+    public DbSet<Category> Category {get; set;}
 
     //parameterless constructor
     public BookstoreDbContext()
     {
         
     }
+    public BookstoreDbContext(DbContextOptions<BookstoreDbContext> options) : base(options)
+    {
+    }
 
     //set database conection
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        //Configure kalo belum di configure
         if (!optionsBuilder.IsConfigured)
         {
             optionsBuilder.UseSqlite("Data Source=BookstoreDatabase.db");
         }
-        //base.OnConfiguring(optionsBuilder);
     }
-
-    //bikin model pake override OnModelCreating
-
     protected override void OnModelCreating(ModelBuilder modelBuilder)
+{
+    modelBuilder.Entity<Book>(entity =>
     {
-        //book
-        modelBuilder.Entity<Book>(entity =>
-        {
-            entity.HasIndex(b => b.Title).IsUnique();
-            entity.HasOne(a => a.Author)
-                .WithMany(b => b.Books)
-                .HasForeignKey(a => a.AuthorId)
-                .OnDelete(DeleteBehavior.Restrict);            
-        });
 
-        modelBuilder.Entity<Book>(entity =>
-        {
-            entity.HasIndex(c => c.Categories).IsUnique();
-            entity.HasMany(c => Categories)
-                .WithMany(b => b.Books);
-        });
+        entity.HasIndex(b => b.Title).IsUnique();
 
-        //author
-        modelBuilder.Entity<Author> (entity =>
-        {
-            entity.HasIndex (e=> e.Email).IsUnique();
-            entity.HasIndex(n => n.PhoneNumber).IsUnique();
-        });
+     
+        entity.HasOne(b => b.Author)
+            .WithMany(a => a.Books) 
+            .HasForeignKey(b => b.AuthorId)
+            .OnDelete(DeleteBehavior.Restrict); 
 
-        //category
-        modelBuilder.Entity<Category> (entity =>
-        {
-            entity.HasIndex(n => n.Name).IsUnique();
-        });
+        entity.HasMany(b => b.Categories)  
+            .WithMany(c => c.Books);      
+    });
 
+    modelBuilder.Entity<Author>(entity =>
+    {
+        entity.HasIndex(e => e.Email).IsUnique();
+        entity.HasIndex(n => n.PhoneNumber).IsUnique();
+    });
+
+    // --- KONFIGURASI CATEGORY ---
+    modelBuilder.Entity<Category>(entity =>
+    {
+        entity.HasIndex(n => n.Name).IsUnique();
+    });
     }
 }
